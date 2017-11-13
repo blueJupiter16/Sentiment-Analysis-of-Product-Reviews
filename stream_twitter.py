@@ -5,7 +5,7 @@ import datetime as dt
 import time
 import os
 import sys
-
+import re
 
 '''
 In order to use this script you should register a data-mining application
@@ -85,11 +85,18 @@ def get_tweet_id(api, date='', days_ago=9, query='a'):
 
 def write_tweets(tweets, filename):
     ''' Function that appends tweets to a file. '''
-
+	#fl=filename.split('.')
+    #print(type(tweets))	
     with open(filename, 'a') as f:
         for tweet in tweets:
             json.dump(tweet._json, f)
             f.write('\n')
+            if(tweet.lang=="en"):            
+                tweettext=str(tweet.text)
+                tweettext=' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",tweettext).split())                
+                print(tweettext,"\n")
+
+	#os.system("python3 convert.py"+ filename +" "+fl[0]+".txt" )
 
 
 def main():
@@ -100,7 +107,7 @@ def main():
 
 
     ''' search variables: '''
-    search_phrases = ['#review #smartphone']
+    search_phrases = ['#iphone']
     time_limit = 10                           # runtime limit in hours
     max_tweets = 20                          # number of tweets per search (will be
                                                # iterated over) - maximum is 100
