@@ -2,11 +2,29 @@ import pandas as pd
 import gzip
 import os
 
-def touch(df, folder):
-    for x in range(len(df.index)):
-        filename = 'f' + str(x) + '.txt'
-        with open(folder + "/" + filename, 'w') as output_file:
+#number of reviews
+
+num_reviews = 2000
+num_test = 6000
+
+def touch_test(df, folder):
+    for x in range(len(df.index[num_reviews+1:num_reviews+num_test])):
+		
+        filename = 'f' + folder + str(x) + '.txt'
+        with open("test" + "/" + folder + "/" + filename, 'w') as output_file:
             output_file.write(df.reviewText[x])
+
+def touch_train(df, folder):
+    for x in range(len(df.index[0:num_reviews])):
+        filename = 'f' + folder + str(x) + '.txt'
+        with open("training" + "/" + folder + "/" + filename, 'w') as output_file:
+            output_file.write(df.reviewText[x])#int(len(df)/2) +
+
+def make_folder(directory):
+    folders = 5
+    for i in range(folders):
+        new_folder = str(i + 1)
+        if not os.path.exists(directory + "/" + new_folder): os.makedirs(directory + "/" + new_folder)
 
 def parse(path):
   g = gzip.open(path, 'rb')
@@ -24,10 +42,11 @@ def getDF(path):
 df = getDF('reviews_Cell_Phones_and_Accessories_5.json.gz')
 new = df[['overall','reviewText']].copy()
 
-folders = 5
-for i in range(folders):
-    new_folder = str(i+1)
-    if not os.path.exists(new_folder): os.makedirs(new_folder)
+if not os.path.exists("test"): os.makedirs("test")
+if not os.path.exists("training"): os.makedirs("training")
+
+make_folder("test")
+make_folder("training")
 
 all_one = new[new['overall'] == 1]
 all_one = all_one.reset_index();
@@ -44,8 +63,14 @@ all_four = all_four.reset_index();
 all_five = new[new['overall'] == 5]
 all_five = all_five.reset_index();
 
-touch(all_one, '1')
-touch(all_two, '2')
-touch(all_three, '3')
-touch(all_four, '4')
-touch(all_five, '5')
+touch_test(all_one, '1')
+touch_test(all_two, '2')
+touch_test(all_three, '3')
+touch_test(all_four, '4')
+touch_test(all_five, '5')
+
+touch_train(all_one, '1')
+touch_train(all_two, '2')
+touch_train(all_three, '3')
+touch_train(all_four, '4')
+touch_train(all_five, '5')

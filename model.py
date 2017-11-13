@@ -1,4 +1,5 @@
 from sklearn.datasets import fetch_20newsgroups
+from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.pipeline import Pipeline
@@ -7,12 +8,25 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
 from sklearn import metrics
 import numpy as np
+import _pickle as cPickle
 
-category = ['alt.atheism', 'soc.religion.christian','comp.graphics','sci.med']
-twenty_train = fetch_20newsgroups(subset='train',categories=None,shuffle=True,random_state=42)
-twenty_test = fetch_20newsgroups(subset='test',categories=None,shuffle=True,random_state=42)
-docs_test = twenty_test.data
-#print(twenty_train.target[:10])
+
+train_data = load_files('training',description="Training Data",categories=None,load_content=True,shuffle=True,encoding=None,decode_error='strict',random_state=0)
+#train_data = fetch_20newsgroups(subset='train',categories=None,shuffle=True,random_state=42)
+
+##save bunch object
+with open('train_data_bunch.pkl','wb') as fd:
+    cPickle.dump(train_data,fd)
+
+test_data = load_files('test',description="Training Data",categories=None,load_content=True,shuffle=True,encoding=None,decode_error='strict',random_state=0)
+docs_test = test_data.data
+
+##save bunch object
+with open('test_data_bunch.pkl','wb') as fd:
+    cPickle.dump(train_data,fd)
+
+
+#print(train_data.target[:10])
 #cout_vector = CountVectorizer()
 #X_train = cout_vector.fit_transform(twenty_train.data)
 #print(X_train.shape)
@@ -23,24 +37,34 @@ docs_test = twenty_test.data
 #print(X_train_tfidf.shape)
 
 #clf = MultinomialNB().fit(X_train_tfidf, twenty_train.target)
+
+
 text_clf = Pipeline([('vect', CountVectorizer()),
                      ('tfidf', TfidfTransformer()),
-                     ('clf', SGDClassifier())])#loss="hinge",penalty='l2',alpha=0.0001,random_state=None,max_iter=None,tol=None))])
-text_clf.fit(twenty_train.data,twenty_train.target)
+                     ('clf', SGDClassifier())])
+text_clf.fit(train_data.data,train_data.target)
 
-predicted = text_clf.predict(docs_test)
-print(np.mean(predicted == twenty_test.target) * 100 ,"%")
-print(metrics.classification_report(twenty_test.target,predicted,target_names=twenty_test.target_names))
-"""s = "yes"
+##save classifier object
+with open('classifier_object.pkl', 'wb') as fid:
+    cPickle.dump(text_clf, fid)
+
+
+'''s = "yes"
 while(s != "No"):
 
     s = input()
     docs_new = []
     docs_new.append(s)
-    #X_new_counts = cout_vector.transform(docs_new)
-    #X_new_tfidf = tfidf_transformer.transform(X_new_counts)
-
     predicted = text_clf.predict(docs_new)
 
     for doc, category in zip(docs_new, predicted):
-        print('%r => %s' % (doc, twenty_train.target_names[category]))"""
+        print('%r => %s' % (doc, train_data.target_names[category]))'''
+
+
+
+
+def printPerformance(text_clf,test_data,docs_test):
+    
+    predicted = text_clf.predict(docs_test)
+    print(np.mean(predicted == test_data.target) * 100 ,"%")
+    print(metrics.classification_report(test_data.target,predicted,target_names=test_data.target_names))
