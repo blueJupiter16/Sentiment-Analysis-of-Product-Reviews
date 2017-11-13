@@ -6,7 +6,9 @@ import time
 import os
 import sys
 import re
-
+import _pickle as cPickle
+from sklearn import metrics
+import numpy as np
 '''
 In order to use this script you should register a data-mining application
 with Twitter.  Good instructions for doing so can be found here:
@@ -19,6 +21,16 @@ python twitter_search.py
 I used Python 3 and tweepy version 3.5.0.  You will also need the other
 packages imported above.
 '''
+#############Global Classifier Variables##########
+
+with open('classifier_object.pkl', 'rb') as fid:
+    text_clf = cPickle.load(fid)
+with open('test_data_bunch.pkl', 'rb') as fid:
+    test_data = cPickle.load(fid)
+with open('train_data_bunch.pkl', 'rb') as fid:
+    train_data = cPickle.load(fid)
+
+###################################################
 
 def load_api():
     ''' Function that loads the twitter API after authorizing the user. '''
@@ -87,16 +99,24 @@ def write_tweets(tweets, filename):
     ''' Function that appends tweets to a file. '''
 	#fl=filename.split('.')
     #print(type(tweets))	
-    with open(filename, 'a') as f:
-        for tweet in tweets:
-            json.dump(tweet._json, f)
-            f.write('\n')
-            if(tweet.lang=="en"):            
-                tweettext=str(tweet.text)
-                tweettext=' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",tweettext).split())                
-                print(tweettext,"\n")
+    for tweet in tweets:
+     
+        if(tweet.lang=="en"):            
+            tweettext=str(tweet.text)
+            tweettext=' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",tweettext).split())                
+            classify(tweettext)
 
-	#os.system("python3 convert.py"+ filename +" "+fl[0]+".txt" )
+def classify(s):
+    #s = input()
+    docs_new = []
+    docs_new.append(s)
+    #X_new_counts = cout_vector.transform(docs_new)
+    #X_new_tfidf = tfidf_transformer.transform(X_new_counts)
+
+    predicted = text_clf.predict(docs_new)
+
+    for doc, category in zip(docs_new, predicted):
+        print('%r => %s' % ( doc,test_data.target_names[category]))
 
 
 def main():
@@ -106,8 +126,9 @@ def main():
 
 
 
+
     ''' search variables: '''
-    search_phrases = ['#iphone']
+    search_phrases = ['mobile review']
     time_limit = 10                           # runtime limit in hours
     max_tweets = 20                          # number of tweets per search (will be
                                                # iterated over) - maximum is 100
@@ -141,7 +162,7 @@ def main():
                   d1.year, d1.month, d1.day, d2.year, d2.month, d2.day)
         json_file = json_file_root +'.json'
         if os.path.isfile(json_file):
-            print('Appending tweets to file named: ',json_file)
+            #print('Appending tweets to file named: ',json_file)
             read_IDs = True
         
         # authorize and load the twitter API
