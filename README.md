@@ -12,7 +12,7 @@ The scope of this project is limited to analysis of review data for smartphones.
 
 1. Data collection and cleaning
 
-   Customer review data is collected from an online source(http://jmcauley.ucsd.edu/data/amazon/) that contains data segregated into multiple categories. The data obtained from this source is in  JSON format which is parsed and cleaned according to the need of the model. 
+   Customer review data is collected from an online source (http://jmcauley.ucsd.edu/data/amazon/) that contains data segregated into multiple categories. The data obtained from this source is in  JSON format which is parsed and cleaned according to the need of the model. 
 
    After cleaning, the data is separated into two parts: training set and testing set. The training set is used to train the ML model and the testing dataset is used for validation of the model and to calculate mathematical parameters. 
 
