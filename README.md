@@ -31,6 +31,7 @@ The scope of this project is limited to analysis of review data for smartphones.
    ​
 
 3. Live streaming of Twitter Data
+
    For streaming tweets, tweepy library has been used to extract data from twitter API. The script can take multiple keywords for searching and extract the tweets matching the given keywords. Along with keywords, the tweets can be filtered based on geolocation on the tweets, as well as, on the timeframe of tweets. 
    
    The relevant data from each tweet is then filtered and converted to text format.
