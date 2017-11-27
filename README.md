@@ -26,7 +26,7 @@ The scope of this project is limited to analysis of review data for smartphones.
 
    After training the and testing, following was observed: 
 
-   # Precision: 0.8, F1- Score: 0.79, Accuracy: 78.9 %
+   ##### Precision: 0.8, F1- Score: 0.79, Accuracy: 78.9 %
 
    ​
 
