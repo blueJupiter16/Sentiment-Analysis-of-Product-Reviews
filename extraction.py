@@ -9,7 +9,7 @@ stop = [ "a", "about", "above", "after", "again", "against", "all", "am", "an", 
 def touch_test(df, folder):
     for x in range(len(df.index[0:int(len(df)/2)])):
         filename = 'f' + folder + str(x) + '.txt'
-        with open("try" + "/" + folder + "/" + filename, 'w') as output_file:
+        with open("test" + "/" + folder + "/" + filename, 'w') as output_file:
             output_file.write(''.join(df.reviewText[x]))
 
 def touch_train(df, folder):
@@ -49,10 +49,10 @@ df = getDF('reviews_Cell_Phones_and_Accessories_5.json.gz')
 new = df[['overall','reviewText']].copy()
 new['reviewText'] = new.apply(remove_stop,axis=1)
 
-if not os.path.exists("try"): os.makedirs("try")
+if not os.path.exists("test"): os.makedirs("test")
 if not os.path.exists("training"): os.makedirs("training")
 
-make_folder("try")
+make_folder("test")
 make_folder("training")
 
 all_one = new[new['overall'] == 1]
